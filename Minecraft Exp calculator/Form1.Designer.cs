@@ -413,7 +413,7 @@
             this.MaximumSize = new System.Drawing.Size(480, 320);
             this.MinimumSize = new System.Drawing.Size(480, 320);
             this.Name = "Form1";
-            this.Text = "Minecraft Exp Calculator v0.1";
+            this.Text = "Minecraft Exp Calculator v0.2";
             this.tabPage3.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
