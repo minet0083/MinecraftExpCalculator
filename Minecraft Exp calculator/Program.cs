@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Minecraft_Exp_calculator
+namespace MinecraftExpCalculator
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace Minecraft_Exp_calculator
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new AppWindow());
         }
     }
 }
