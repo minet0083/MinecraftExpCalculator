@@ -8,87 +8,145 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Minecraft_Exp_calculator
+namespace MinecraftExpCalculator
 {
-    public partial class Form1 : Form
-    { 
-        public Form1()
+    public partial class AppWindow : Form
+    {
+        public AppWindow()
         {
             InitializeComponent();
         }
 
-        private void button_17_Click(object sender, EventArgs e)
+        private void button_Click(object sender, EventArgs e)
         {
-            // 変数をまとめて先に宣言してみる。
-            int value_17;
-            string sResultExp = "";
-            string sResultLv = "";
-            string sRequireExp = "";
-            if (InputBox.TextLength == 0) // テキストボックスが空の時
+            int value;
+            double s_resultLv = new double();
+            double s_resultExp = new double();
+            double s_requireExp = new double();
+
+            // テキストボックス未入力時
+            if (inputBox.TextLength == 0)
             {
                 MessageBox.Show("何も入力されていません。", "注意");
                 return;
             }
 
-            if (!int.TryParse(InputBox.Text, out value_17)) // 数字以外を入力された時
+            // 数字以外を入力された時
+            if (!int.TryParse(inputBox.Text, out value)) 
             {
                 MessageBox.Show("数字以外を入力することはできません。", "注意");
                 return;
             }
 
-            value_17 = Convert.ToInt32(InputBox.Text); // int型に変換
-            if (radioButton_LtoE.Checked)
+            // int型に変換
+            value = Convert.ToInt32(inputBox.Text);
+
+            if (value < 0)
             {
-                
-                if (0 <= value_17 && value_17 <= 15)
+                MessageBox.Show("負の数値を入力することはできません。", "注意");
+                return;
+            }
+            
+            // 1.7の計算方式を適用する
+            if (radioButton_v17.Checked)
+            {
+                // レベルを経験値に変換
+                if (radioButton_LtoE.Checked)
                 {
-                    sResultExp = Convert.ToString(1.5 * Math.Pow(value_17, 2) - 29.5 * value_17 + 360);
-                }
-                else if (30 < value_17)
-                {
-                    sResultExp = Convert.ToString(3.5 * Math.Pow(value_17, 2) - 151.5 * value_17 + 2220);
+                    if (0 <= value && value <= 15)
+                    {
+                        s_resultExp = value * 17;
+                    }
+                    else if (15 < value && value <= 30)
+                    {
+                        s_resultExp = 1.5 * Math.Pow(value, 2) - 29.5 * value + 360;
+                    }
+                    else if (30 < value)
+                    {
+                        s_resultExp = 3.5 * Math.Pow(value, 2) - 151.5 * value + 2220;
+                    }
+                    s_resultLv = value;
+                    s_requireExp = s_resultExp;
                 }
 
-                ResultLv.Text = Convert.ToString(value_17);
-                ResultExp.Text = Convert.ToString(sResultExp);
-                RequireExp.Text = sResultExp;
+                // 経験値をレベルに変換
+                if (radioButton_EtoL.Checked)
+                {
+                    if (value == 0)
+                    {
+                        s_resultLv = 0;
+                        s_requireExp = 0;
+                    }
+                    else if (0 < value && value <= 272)
+                    {
+                        s_resultLv = (value / 17);
+                        s_requireExp = s_resultLv * 17;
+                    }
+                    else if (272 < value && value <= 887)
+                    {
+                        s_resultLv = Math.Floor((29.5 + Math.Pow(870.25 - 6 * (360 - value), 0.5)) / 3);
+                        s_requireExp = Math.Floor(1.5 * Math.Pow(s_resultLv, 2) - 29.5 * (s_resultLv) + 360);
+                    }
+                    else if (887 < value)
+                    {
+                        s_resultLv = Math.Floor((151.5 + Math.Pow(22952.25 - 14 * (2220 - value), 0.5)) / 7);
+                        s_requireExp = Math.Floor(3.5 * Math.Pow(s_resultLv, 2) - 151.5 * (s_resultLv) + 2220);
+                    }
+                    s_resultExp = value;
+                }
             }
-            else if (radioButton_EtoL.Checked)
+
+            // 1.8の計算方式を適用する
+            else if (radioButton_v18.Checked)
             {
-                double value_resultLv_17;
-                if (value_17 == 0)
+                // レベルを経験値に変換
+                if (radioButton_LtoE.Checked)
                 {
-                    sResultLv = Convert.ToString(0);
-                    sResultExp = Convert.ToString(0);
-                    sRequireExp = Convert.ToString(0);
-                }
-                else if (0 < value_17 && value_17 <= 272)
-                {
-                    value_resultLv_17 = (value_17 / 17);
-                    sResultLv = Convert.ToString((value_resultLv_17));
-                    sResultExp = Convert.ToString(value_17);
-                    sRequireExp = Convert.ToString(value_resultLv_17 * 17);
-                }
-                else if (272 < value_17 && value_17 <= 887)
-                {
-                    value_resultLv_17 = Math.Floor((29.5 + Math.Pow(870.25 - 6 * (360 - value_17), 0.5)) / 3);
-                    sResultLv = Convert.ToString(value_resultLv_17);
-                    sResultExp = Convert.ToString(value_17);
-                    sRequireExp = Convert.ToString(Math.Floor(1.5 * Math.Pow(value_resultLv_17, 2) - 29.5 * (value_resultLv_17) + 360));
-                }
-                else if (887 < value_17)
-                {
-                    value_resultLv_17 = Math.Floor((151.5 + Math.Pow(22952.25 - 14 * (2220 - value_17), 0.5)) / 7);
-                    sResultLv = Convert.ToString(value_resultLv_17);
-                    sResultExp = Convert.ToString(value_17);
-                    sRequireExp = Convert.ToString(Math.Floor(3.5 * Math.Pow(value_resultLv_17, 2) - 151.5 * (value_resultLv_17) + 2220));
+                    if (0 <= value && value <= 15)
+                    {
+                        s_resultExp = Math.Pow(value, 2) + value * 6;
+                    }
+                    else if (15 < value && value <= 30)
+                    {
+                        s_resultExp = 2.5 * Math.Pow(value, 2) - 40.5 * value + 360;
+                    }
+                    else if (30 < value)
+                    {
+                        s_resultExp = 4.5 * Math.Pow(value, 2) - 162.5 * value + 2220;
+                    }
+                    s_resultLv = value;
+                    s_requireExp = s_resultExp;
                 }
 
-                ResultLv.Text = sResultLv;
-                ResultExp.Text = sResultExp;
-                RequireExp.Text = sRequireExp;
+                // 経験値をレベルに変換
+                if (radioButton_EtoL.Checked)
+                {
+                    if (value == 0)
+                    {
+                        s_resultLv = 0;
+                        s_requireExp = 0;
+                    }
+                    else if (0 < value && value <= 352)
+                    {
+                        s_resultLv = Math.Floor((Math.Pow((36 + 4 * value), 0.5) - 6) / 2);
+                        s_requireExp = Math.Floor(Math.Pow(s_resultLv, 2) + 6 * (s_resultLv));
+                    }
+                    else if (272 < value && value <= 887)
+                    {
+                        s_resultLv = Math.Floor((40.5 + Math.Pow(1640.25 - 10 * (360 - value), 0.5)) / 5);
+                        s_requireExp = Math.Floor(2.5 * Math.Pow(s_resultLv, 2) - 40.5 * (s_resultLv) + 360);
+                    }
+                    else if (887 < value)
+                    {
+                        s_resultLv = Math.Floor((162.5 + Math.Pow(26406.25 - 18 * (2220 - value), 0.5)) / 9);
+                        s_requireExp = Math.Floor(4.5 * Math.Pow(s_resultLv, 2) - 162.5 * (s_resultLv) + 2220);
+                    }
+                    s_resultExp = value;
+                }
             }
+            resultLv.Text = Convert.ToString(s_resultLv);
+            resultExp.Text = Convert.ToString(s_resultExp);
+            requireExp.Text = Convert.ToString(s_requireExp);
         }
-
-       }
+    }
 }
